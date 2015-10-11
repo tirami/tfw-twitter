@@ -1,13 +1,16 @@
-import tweepy
-from tweepy.streaming import StreamListener
-from tweepy import OAuthHandler
-from tweepy import Stream
+from collections import defaultdict
+import json
 
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
 
-import json
+from tweepy.streaming import StreamListener
+from tweepy import OAuthHandler
+from tweepy import Stream
+
+from database import db_session
+from model import Tweet
 
 consumer_key = 'A8BdqFZb6pX6nzdC55b7xJbaJ'
 consumer_secret = 'fyRbYzEDlfP6lLilmN6Sl5laaTW0NWRdKevWnI1dGwvCbbJBIL'
@@ -26,21 +29,42 @@ class StdOutListener(StreamListener):
             print dict
         else:
             tokens = tknzr.tokenize(dict['text'])
-            # words = [w for w in tokens if w not in stop]
             tagged = nltk.pos_tag(tokens)
             nouns = [word for (word, type) in tagged if type == 'NN'] # can be a noun or a hashtag
-            print nouns
+
+            terms_dict = defaultdict(int)
+            for noun in nouns:
+                terms_dict[noun] += 1
+            tweet_id = dict['id']
+            timestamp_ms = dict['timestamp_ms']
+
+            tweet = Tweet(tweet_id, terms_dict, timestamp_ms)
+            db_session.add(tweet)
+            db_session.commit()
+
+            print tweet
         return True
 
     def on_error(self, status):
         print status
 
+stream = None
+app = None
 
-if __name__ == '__main__':
-
+def start_mining(follow):
     listener = StdOutListener()
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_secret)
     stream = Stream(auth, listener)
+    #stream.filter(follow=follow, async=True)
+    stream.filter(locations=[-122.75,36.8,-121.75,37.8], async=True)
 
-    stream.filter(locations=[-122.75,36.8,-121.75,37.8])
+
+def stop_mining():
+    stream.close()
+
+
+def reset_miner(follow):
+    if stream != None:
+        stop_mining()
+    start_mining(follow)
