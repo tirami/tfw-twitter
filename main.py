@@ -1,20 +1,20 @@
+import re
+
 import flask
+from flask import jsonify
 from flask import request
+
 from database import init_db
 from model import Config
 from model import Tweet
-
-from flask import jsonify
-import re
-
 import mine
 
-# Create the Flask application and the Flask-SQLAlchemy object.
+# setup the Flask app
 app = flask.Flask(__name__)
 app.config['DEBUG'] = True
 
+# setup the database
 init_db()
-
 from database import db_session
 
 @app.teardown_appcontext

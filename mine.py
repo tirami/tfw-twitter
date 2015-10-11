@@ -55,7 +55,7 @@ def start_mining(follow):
     auth.set_access_token(access_token, access_secret)
     stream = Stream(auth, listener)
     stream.filter(follow=follow, async=True)
-    # stream.filter(locations=[-122.75,36.8,-121.75,37.8], async=True)
+    # stream.filter(locations=[-122.75,36.8,-121.75,37.8], async=True) # this is for debug, provides more Test Tweets
 
 
 def stop_mining():
