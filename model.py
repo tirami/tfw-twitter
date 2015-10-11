@@ -23,7 +23,7 @@ class Tweet(Base):
     id = Column(Integer, primary_key=True)
     tweet_id = Column(Integer)
     terms = Column(Unicode)
-    timestamp_ms = Column(Unicode)
+    timestamp_ms = Column(Integer)
 
     def __init__(self, tweet_id, terms_dict, timestamp_ms):
         self.tweet_id = tweet_id
@@ -32,3 +32,10 @@ class Tweet(Base):
 
     def __repr__(self):
         return '<Tweet id:%d, terms:%s, ts:%s>' % (self.id, self.terms, self.timestamp_ms)
+
+    def serialize(self):
+        return {
+           'tweet_id' : self.tweet_id,
+           'terms': self.terms,
+           'timestamp_ms' : self.timestamp_ms
+        }

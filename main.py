@@ -2,7 +2,7 @@ import flask
 from flask import request
 from database import init_db
 from model import Config
-from database import db_session
+from model import Tweet
 
 from flask import jsonify
 import re
@@ -70,6 +70,20 @@ def config():
         c = Config.query.first()
         return jsonify(users=c.users)
 
+
+@app.route('/posts', methods=['GET'])
+def posts():
+    if request.method == 'GET':
+        timestamp = 0
+        ts_arg = request.args.get('timestamp')
+        if ts_arg != None:
+            pattern = re.compile("[0-9]+")
+            if pattern.match(ts_arg):
+                timestamp = int(ts_arg)
+            else:
+                return 'timestamp query parameter is malformed.', 400
+        tweets = Tweet.query.filter(Tweet.timestamp_ms >= timestamp).all()
+        return jsonify(posts=[i.serialize() for i in tweets])
 
 # start the flask loop
 app.run()

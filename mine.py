@@ -20,7 +20,6 @@ access_secret = 'oY6CJphyCXsfQnj1h680ovhdPFoSWK9msAp34IHU4sRNx'
 tknzr = TweetTokenizer()
 stop = stopwords.words('english')
 
-#This is a basic listener that just prints received tweets to stdout.
 class StdOutListener(StreamListener):
 
     def on_data(self, data):
@@ -31,18 +30,17 @@ class StdOutListener(StreamListener):
             tokens = tknzr.tokenize(dict['text'])
             tagged = nltk.pos_tag(tokens)
             nouns = [word for (word, type) in tagged if type == 'NN'] # can be a noun or a hashtag
+            if nouns.count() > 0:
+                terms_dict = defaultdict(int)
+                for noun in nouns:
+                    terms_dict[noun] += 1
+                tweet_id = dict['id']
+                timestamp_ms = dict['timestamp_ms']
 
-            terms_dict = defaultdict(int)
-            for noun in nouns:
-                terms_dict[noun] += 1
-            tweet_id = dict['id']
-            timestamp_ms = dict['timestamp_ms']
+                tweet = Tweet(tweet_id, terms_dict, timestamp_ms)
+                db_session.add(tweet)
+                db_session.commit()
 
-            tweet = Tweet(tweet_id, terms_dict, timestamp_ms)
-            db_session.add(tweet)
-            db_session.commit()
-
-            print tweet
         return True
 
     def on_error(self, status):
@@ -56,8 +54,8 @@ def start_mining(follow):
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_secret)
     stream = Stream(auth, listener)
-    #stream.filter(follow=follow, async=True)
-    stream.filter(locations=[-122.75,36.8,-121.75,37.8], async=True)
+    stream.filter(follow=follow, async=True)
+    # stream.filter(locations=[-122.75,36.8,-121.75,37.8], async=True)
 
 
 def stop_mining():
