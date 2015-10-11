@@ -1,0 +1,72 @@
+swagger: '2.0'
+info:
+  version: 0.0.1
+  title: 'Udadisi miner for Twitter'
+paths:
+  /posts?timestamp:
+    get:
+      description: |
+        Get a list of all the Tweets that have been mined.
+        The timestamp parameter allows you to get all the Tweets since that time.
+      parameters:
+        -
+          name: timestamp
+          in: query
+          description: Return all the Tweets after this time.  Specific as a Unix timestamp.
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            title: Posts
+            type: array
+            items:
+              title: Tweet
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: "The id of the Tweet from Twitter.  Can be used to retrive the original text from Twitter."
+                terms:
+                  type: object
+                  description: "Dictionary of terms to frequency counts based on the nouns found in the Tweet."
+                timestamp:
+                  type: integer
+                  description: "Unix timestamp of the time at which the Tweet was mined."
+  /config:
+    get:
+      description: |
+        Get the current configuration for the miner.  Returns a dictionary of the config keys and their current values.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            title: Config
+            type: object
+            properties:
+              Users:
+                type: array
+                description: List of Twitter accounts to mine.
+                items:
+                  title: User
+                  type: string
+                  description: Twitter userid of the account that we are interested in mining.
+        
+    post:
+      description: |
+        Post a new configuration for the miner.  This overwrites the original.
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            title: Config
+            type: object
+            properties:
+              Users:
+                type: array
+                description: List of Twitter accounts to mine.
+                items:
+                  title: User
+                  type: string
+                  description: Twitter userid of the account that we are interested in mining.
