@@ -68,6 +68,8 @@ def config():
     elif request.method == 'GET':
         # retrive the current configuration and return it
         c = Config.query.first()
+        if c == None:
+            c = { 'users' : '' }
         return jsonify(users=c.users)
 
 
