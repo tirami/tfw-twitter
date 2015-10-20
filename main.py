@@ -3,11 +3,15 @@ import re
 import flask
 from flask import jsonify
 from flask import request
+from flask import render_template
+from flask import current_app
 
 from database import init_db
 from model import Config
 from model import Tweet
 import mine
+
+import validators
 
 # setup the Flask app
 app = flask.Flask(__name__)
@@ -28,9 +32,56 @@ def has_keys(keys, dict):
     return all (k in keys for k in dict)
 
 
+def validate_config(dict):
+    errors = {}
+    if dict == None:
+        errors['main'] = 'Body not present.  Content-Type might be wrong.'
+    if len(dict) <= 0 or not has_keys(['users'], dict):
+        errors['main'] = 'JSON body does not have the correct keys.'
+    users = dict['users']
+    pattern = re.compile("^[0-9]+(,[0-9]+)*$")
+    if not pattern.match(users.replace(" ", "")):
+        errors['users'] = 'users argument is wrong format.'
+    parenturi = dict['parenturi']
+    if not validators.url(parenturi):
+        errors['parenturi'] = 'parenturi is not a valid url.'
+    return len(errors) <= 0, errors
+
 #########
 # Routes
 #########
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+    # get the settings
+    config = Config.query.first()
+
+    if request.method == 'GET':
+        # render the form
+        return render_template('settings.html', config=config)
+    elif request.method == 'POST':
+        has_error, errors = validate_config(request.form)
+        if has_error:
+            current_app.logger.error('error' + errors)
+            return render_template('settings.html', errors)
+        else:
+            if config is not None:
+                db_session.delete(old)
+
+            # add the config to the db
+            new = Config(users)
+            db_session.add(new)
+
+            # commit the db changes
+            db_session.commit()
+
+            # when a new config is posted
+            # kill the old Miner and start up a new one
+            mine.reset_miner(users)
+
+            # return OK
+            return 'New configuration saved.', 200
+
+
 @app.route('/config', methods=['GET', 'POST'])
 def config():
     if request.method == 'POST':
