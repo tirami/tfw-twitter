@@ -10,12 +10,13 @@ class Config(Base):
     __tablename__ = 'config'
     id = Column(Integer, primary_key=True)
     users = Column(Unicode)
+    parenturi = Column(Unicode)
 
     def __init__(self, users):
         self.users = users
 
     def __repr__(self):
-        return '<Config id:%d, users:%s>' % (self.id, self.users)
+        return '<Config id:%d, users:%s, parenturi:%s>' % (self.id, self.users, self.parenturi)
 
 
 class Tweet(Base):
