@@ -12,8 +12,9 @@ class Config(Base):
     users = Column(Unicode)
     parenturi = Column(Unicode)
 
-    def __init__(self, users):
+    def __init__(self, users, parenturi):
         self.users = users
+        self.parenturi = parenturi
 
     def __repr__(self):
         return '<Config id:%d, users:%s, parenturi:%s>' % (self.id, self.users, self.parenturi)

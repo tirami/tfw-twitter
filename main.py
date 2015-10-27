@@ -25,27 +25,39 @@ from database import db_session
 def shutdown_session(exception=None):
     db_session.remove()
 
+
 #########
 # Util
 #########
-def has_keys(keys, dict):
-    return all (k in keys for k in dict)
+url_re = re.compile(
+        r'^(?:http|ftp)s?://' # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+        r'localhost|' #localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+        r'(?::\d+)?' # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
 
-def validate_config(dict):
+def validate_settings(dict):
     errors = {}
-    if dict == None:
-        errors['main'] = 'Body not present.  Content-Type might be wrong.'
-    if len(dict) <= 0 or not has_keys(['users'], dict):
-        errors['main'] = 'JSON body does not have the correct keys.'
-    users = dict['users']
-    pattern = re.compile("^[0-9]+(,[0-9]+)*$")
-    if not pattern.match(users.replace(" ", "")):
-        errors['users'] = 'users argument is wrong format.'
-    parenturi = dict['parenturi']
-    if not validators.url(parenturi):
-        errors['parenturi'] = 'parenturi is not a valid url.'
-    return len(errors) <= 0, errors
+    has_users = "users" in dict
+    if not has_users:
+        errors['users'] = 'This field is missing.'
+
+    has_parenturi = "parenturi" in dict
+    if not has_parenturi:
+        errors['parenturi'] = 'This field is missing.'
+
+    if has_users and has_parenturi:
+        users = dict['users']
+        user_id_pattern = re.compile("^[0-9]+(,[0-9]+)*$")
+        if not user_id_pattern.match(users.replace(" ", "")):
+            errors['users'] = 'This should be a comma seperated list of Twitter user ids.'
+        parenturi = dict['parenturi']
+        if not url_re.match(parenturi):
+            errors['parenturi'] = 'This should be a valid uri, that points to the aggrigation server.'
+
+    return len(errors) > 0, errors
 
 #########
 # Routes
@@ -59,16 +71,22 @@ def settings():
         # render the form
         return render_template('settings.html', config=config)
     elif request.method == 'POST':
-        has_error, errors = validate_config(request.form)
+        has_error, errors = validate_settings(request.form)
         if has_error:
-            current_app.logger.error('error' + errors)
-            return render_template('settings.html', errors)
+            current_app.logger.error('error' + str(errors))
+            return render_template('settings.html', errors=errors)
         else:
+            users = request.form['users']
+            parenturi = request.form['parenturi']
+
+            # remove any old config object from the db
+            old = Config.query.first()
+
             if config is not None:
                 db_session.delete(old)
 
             # add the config to the db
-            new = Config(users)
+            new = Config(users, parenturi)
             db_session.add(new)
 
             # commit the db changes
@@ -79,49 +97,7 @@ def settings():
             mine.reset_miner(users)
 
             # return OK
-            return 'New configuration saved.', 200
-
-
-@app.route('/config', methods=['GET', 'POST'])
-def config():
-    if request.method == 'POST':
-        # filter out anything that is posted that is not an integer
-        json = request.get_json()
-        if json == None:
-            return 'JSON body not present.  Content-Type must be set to application/json.'
-        if len(json) <= 0 or not has_keys(['users'], json):
-            return 'JSON body does not have the correct keys.', 400
-        users = json['users']
-        pattern = re.compile("^[0-9]+(,[0-9]+)*$")
-        if not pattern.match(users.replace(" ", "")):
-            return 'JSON body is wrong format.', 400
-
-        # remove any old config object from the db
-        old = Config.query.first()
-        if old is not None:
-            db_session.delete(old)
-
-        # add the config to the db
-        new = Config(users)
-        db_session.add(new)
-
-        # commit the db changes
-        db_session.commit()
-
-        # when a new config is posted
-        # kill the old Miner and start up a new one
-        mine.reset_miner(users)
-
-        # return OK
-        return 'New configuration saved.', 200
-
-
-    elif request.method == 'GET':
-        # retrive the current configuration and return it
-        c = Config.query.first()
-        if c == None:
-            c = { 'users' : '' }
-        return jsonify(users=c.users)
+            return render_template('settings.html', config=config, success=True)
 
 
 @app.route('/posts', methods=['GET'])
@@ -137,6 +113,7 @@ def posts():
                 return 'timestamp query parameter is malformed.', 400
         tweets = Tweet.query.filter(Tweet.timestamp_ms >= timestamp).all()
         return jsonify(posts=[i.serialize() for i in tweets])
+
 
 # start the flask loop
 app.run()

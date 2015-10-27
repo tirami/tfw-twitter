@@ -24,26 +24,43 @@
   <body>
 	<div class="container-fluid">
 
+        {% if success %}
+        <div class="alert alert-success" role="alert">
+            <p>Setting Saved.</p>
+        </div>
+        {% endif %}
+
     	<h1>Settings</h1>
 
 		<form method="post">
       {% if 'parenturi' in errors %}
 		  <div class="form-group has-error">
 		    <label for="parenturi">Aggrigator URI</label>
-		    <input type="text" class="form-control" id="parenturi" placeholder="URI">
+		    <input type="text" class="form-control" id="parenturi" name="parenturi" placeholder="URI" value="{{ config.parenturi }}">
 		    <span class="help-block">{{errors['parenturi']}}</span>
-      </div>
+          </div>
       {% else %}
-      <div class="form-group">
-        <label for="parenturi">Aggrigator URI</label>
-        <input type="text" class="form-control" id="parenturi" placeholder="URI">
-      </div>
+          <div class="form-group">
+            <label for="parenturi">Aggrigator URI</label>
+            <input type="text" class="form-control" id="parenturi" name="parenturi" placeholder="URI" value="{{ config.parenturi }}">
+          </div>
       {% endif %}
+
+      {% if 'users' in errors %}
+		  <div class="form-group has-error">
+		    <label for="users">Twitter UserIDs</label>
+		    <input type="text" class="form-control" id="users" name="users" placeholder="Comma Seperated UserIDs" value="{{ config.users }}">
+            <span class="help-block">{{errors['users']}}</span>
+		  </div>
+      {% else %}
 		  <div class="form-group">
 		    <label for="users">Twitter UserIDs</label>
-		    <input type="text" class="form-control" id="users" placeholder="Comma Seperated UserIDs" value="{{ config.users }}">
-        <span class="help-block">Please correct the error</span>
+		    <input type="text" class="form-control" id="users" name="users" placeholder="Comma Seperated UserIDs" value="{{ config.users }}">
 		  </div>
+      {% endif %}
+
+
+
 		  <button type="submit" class="btn btn-default">Submit</button>
 		</form>
 
