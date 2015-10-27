@@ -22,7 +22,11 @@ settings_file.close()
 users = settings_dict['settings']['users']
 parenturi = settings_dict['settings']['parenturi']
 name = settings_dict['settings']['name']
-mine.reset_miner(users, parenturi, name)
+consumer_key = settings_dict['settings']['consumer_key']
+consumer_secret = settings_dict['settings']['consumer_secret']
+access_token = settings_dict['settings']['access_token']
+access_secret = settings_dict['settings']['access_secret']
+mine.reset_miner(users, parenturi, name, consumer_key, consumer_secret, access_token, access_secret)
 
 #########
 # Util
@@ -80,10 +84,27 @@ def settings():
             users = request.form['users']
             parenturi = request.form['parenturi']
             name = request.form['name']
+            consumer_key = request.form['consumer_key']
+            consumer_secret = request.form['consumer_secret']
+            access_token = request.form['access_token']
+            access_secret = request.form['access_secret']
+
+            settings_dict['settings']['users'] = str(users)
+            settings_dict['settings']['parenturi'] = str(parenturi)
+            settings_dict['settings']['name'] = str(name)
+            settings_dict['settings']['consumer_key'] = str(consumer_key)
+            settings_dict['settings']['consumer_secret'] = str(consumer_secret)
+            settings_dict['settings']['access_token'] = str(access_token)
+            settings_dict['settings']['access_secret'] = str(access_secret)
 
             # when a new config is posted
             # kill the old Miner and start up a new one
-            mine.reset_miner(users, parenturi, name)
+            mine.reset_miner(users, parenturi, name, consumer_key, consumer_secret, access_token, access_secret)
+
+            # write the new settings file
+            f = open('settings.yaml', "w")
+            yaml.dump(settings_dict, f, default_flow_style=False, encoding='utf-8')
+            f.close()
 
             # return OK
             return render_template('settings.html', settings=settings_dict['settings'], success=True)

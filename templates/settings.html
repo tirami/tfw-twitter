@@ -34,9 +34,9 @@
 
 		<form method="post">
 
-        {% if 'parenturi' in errors %}
+        {% if 'name' in errors %}
             <div class="form-group has-error">
-                <label for="name">Aggrigator URI</label>
+                <label for="name">Name</label>
                 <input type="text" class="form-control" id="name" name="name" placeholder="Name" value="{{ settings['name'] }}">
                 <span class="help-block">{{errors['name']}}</span>
             </div>
@@ -49,7 +49,7 @@
 
         {% if 'parenturi' in errors %}
           <div class="form-group has-error">
-            <label for="parenturi">Aggrigator URI</label>
+            <label for="parenturi">Name</label>
             <input type="text" class="form-control" id="parenturi" name="parenturi" placeholder="URI" value="{{ settings['parenturi'] }}">
             <span class="help-block">{{errors['parenturi']}}</span>
           </div>
@@ -73,7 +73,57 @@
           </div>
         {% endif %}
 
+        {% if 'consumer_key' in errors %}
+          <div class="form-group has-error">
+            <label for="users">Twitter Consumer Key</label>
+            <input type="text" class="form-control" id="consumer_key" name="consumer_key" placeholder="Twitter Consumer key" value="{{ settings['consumer_key'] }}">
+            <span class="help-block">{{errors['users']}}</span>
+          </div>
+        {% else %}
+          <div class="form-group">
+            <label for="users">Twitter Consumer Key</label>
+            <input type="text" class="form-control" id="consumer_key" name="consumer_key" placeholder="Twitter Consumer key" value="{{ settings['consumer_key'] }}">
+          </div>
+        {% endif %}
 
+        {% if 'consumer_secret' in errors %}
+          <div class="form-group has-error">
+            <label for="users">Twitter Consumer Secret</label>
+            <input type="text" class="form-control" id="consumer_secret" name="consumer_secret" placeholder="Twitter Consumer Secret" value="{{ settings['consumer_secret'] }}">
+            <span class="help-block">{{errors['users']}}</span>
+          </div>
+        {% else %}
+          <div class="form-group">
+            <label for="users">Twitter Consumer Secret</label>
+            <input type="text" class="form-control" id="consumer_secret" name="consumer_secret" placeholder="Twitter Consumer Secret" value="{{ settings['consumer_secret'] }}">
+          </div>
+        {% endif %}
+
+        {% if 'access_token' in errors %}
+          <div class="form-group has-error">
+            <label for="users">Twitter Access Token</label>
+            <input type="text" class="form-control" id="access_token" name="access_token" placeholder="Twitter Access Token" value="{{ settings['access_token'] }}">
+            <span class="help-block">{{errors['users']}}</span>
+          </div>
+        {% else %}
+          <div class="form-group">
+            <label for="users">Twitter Access Token</label>
+            <input type="text" class="form-control" id="access_token" name="access_token" placeholder="Twitter Access Token" value="{{ settings['access_token'] }}">
+          </div>
+        {% endif %}
+
+        {% if 'access_secret' in errors %}
+          <div class="form-group has-error">
+            <label for="users">Twitter Access Secret</label>
+            <input type="text" class="form-control" id="access_secret" name="access_secret" placeholder="Twitter Access Secret" value="{{ settings['access_secret'] }}">
+            <span class="help-block">{{errors['users']}}</span>
+          </div>
+        {% else %}
+          <div class="form-group">
+            <label for="users">Twitter Access Secret</label>
+            <input type="text" class="form-control" id="access_secret" name="access_secret" placeholder="Twitter Access Secret" value="{{ settings['access_secret'] }}">
+          </div>
+        {% endif %}
 
 		  <button type="submit" class="btn btn-default">Submit</button>
 		</form>

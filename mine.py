@@ -10,11 +10,6 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 
-consumer_key = 'A8BdqFZb6pX6nzdC55b7xJbaJ'
-consumer_secret = 'fyRbYzEDlfP6lLilmN6Sl5laaTW0NWRdKevWnI1dGwvCbbJBIL'
-access_token = '36620718-PAlXuTv5nVo1mRyPf7CqHzCgtMT84pkFksdososs0'
-access_secret = 'oY6CJphyCXsfQnj1h680ovhdPFoSWK9msAp34IHU4sRNx'
-
 tknzr = TweetTokenizer()
 stop = stopwords.words('english')
 
@@ -62,7 +57,7 @@ class StdOutListener(StreamListener):
 
 stream = None
 
-def start_mining(follow, parenturi, miner_name):
+def start_mining(follow, parenturi, miner_name, consumer_key, consumer_secret, access_token, access_secret):
     global uriForParent
     global nameOfMiner
 
@@ -81,7 +76,7 @@ def stop_mining():
     stream.close()
 
 
-def reset_miner(follow, parenturi, miner_name):
+def reset_miner(follow, parenturi, miner_name, consumer_key, consumer_secret, access_token, access_secret):
     if stream != None:
         stop_mining()
-    start_mining(follow, parenturi, miner_name)
+    start_mining(follow, parenturi, miner_name, consumer_key, consumer_secret, access_token, access_secret)

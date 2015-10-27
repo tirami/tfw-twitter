@@ -1,4 +1,8 @@
 settings:
-  name: Twitter Miner One
+  access_secret: oY6CJphyCXsfQnj1h680ovhdPFoSWK9msAp34IHU4sRNx
+  access_token: 36620718-PAlXuTv5nVo1mRyPf7CqHzCgtMT84pkFksdososs0
+  consumer_key: A8BdqFZb6pX6nzdC55b7xJbaJ
+  consumer_secret: fyRbYzEDlfP6lLilmN6Sl5laaTW0NWRdKevWnI1dGwvCbbJBIL
+  name: Twitter Miner Three
   parenturi: http://localhost:4000/
   users: 123456, 7890123
