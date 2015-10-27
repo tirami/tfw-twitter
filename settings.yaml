@@ -1,0 +1,4 @@
+settings:
+  name: Twitter Miner One
+  parenturi: http://localhost:4000/
+  users: 123456, 7890123

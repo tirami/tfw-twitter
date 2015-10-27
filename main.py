@@ -1,30 +1,28 @@
 import re
 
 import flask
-from flask import jsonify
 from flask import request
 from flask import render_template
 from flask import current_app
 
-from database import init_db
-from model import Config
-from model import Tweet
-import mine
+import yaml
 
-import validators
+import mine
 
 # setup the Flask app
 app = flask.Flask(__name__)
 app.config['DEBUG'] = True
 
-# setup the database
-init_db()
-from database import db_session
+# load up the settings
+settings_file = open('settings.yaml')
+settings_dict = yaml.safe_load(settings_file)
+settings_file.close()
 
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    db_session.remove()
-
+# start up the miner
+users = settings_dict['settings']['users']
+parenturi = settings_dict['settings']['parenturi']
+name = settings_dict['settings']['name']
+mine.reset_miner(users, parenturi, name)
 
 #########
 # Util
@@ -40,6 +38,11 @@ url_re = re.compile(
 
 def validate_settings(dict):
     errors = {}
+
+    has_name = "name" in dict
+    if not has_name:
+        errors['name'] = 'This field is missing.'
+
     has_users = "users" in dict
     if not has_users:
         errors['users'] = 'This field is missing.'
@@ -48,7 +51,7 @@ def validate_settings(dict):
     if not has_parenturi:
         errors['parenturi'] = 'This field is missing.'
 
-    if has_users and has_parenturi:
+    if has_name and has_users and has_parenturi:
         users = dict['users']
         user_id_pattern = re.compile("^[0-9]+(,[0-9]+)*$")
         if not user_id_pattern.match(users.replace(" ", "")):
@@ -64,12 +67,10 @@ def validate_settings(dict):
 #########
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
-    # get the settings
-    config = Config.query.first()
 
     if request.method == 'GET':
         # render the form
-        return render_template('settings.html', config=config)
+        return render_template('settings.html', settings=settings_dict['settings'])
     elif request.method == 'POST':
         has_error, errors = validate_settings(request.form)
         if has_error:
@@ -78,41 +79,14 @@ def settings():
         else:
             users = request.form['users']
             parenturi = request.form['parenturi']
-
-            # remove any old config object from the db
-            old = Config.query.first()
-
-            if config is not None:
-                db_session.delete(old)
-
-            # add the config to the db
-            new = Config(users, parenturi)
-            db_session.add(new)
-
-            # commit the db changes
-            db_session.commit()
+            name = request.form['name']
 
             # when a new config is posted
             # kill the old Miner and start up a new one
-            mine.reset_miner(users, parenturi, "Twitter miner one.")
+            mine.reset_miner(users, parenturi, name)
 
             # return OK
-            return render_template('settings.html', config=config, success=True)
-
-
-@app.route('/posts', methods=['GET'])
-def posts():
-    if request.method == 'GET':
-        timestamp = 0
-        ts_arg = request.args.get('timestamp')
-        if ts_arg != None:
-            pattern = re.compile("[0-9]+")
-            if pattern.match(ts_arg):
-                timestamp = int(ts_arg)
-            else:
-                return 'timestamp query parameter is malformed.', 400
-        tweets = Tweet.query.filter(Tweet.timestamp_ms >= timestamp).all()
-        return jsonify(posts=[i.serialize() for i in tweets])
+            return render_template('settings.html', settings=settings_dict['settings'], success=True)
 
 
 # start the flask loop

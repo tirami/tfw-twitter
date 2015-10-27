@@ -1,6 +1,6 @@
 from collections import defaultdict
 import json
-import urllib, urllib2
+import urllib2
 
 import nltk
 from nltk.corpus import stopwords
@@ -9,9 +9,6 @@ from nltk.tokenize import TweetTokenizer
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
-
-from database import db_session
-from model import Tweet
 
 consumer_key = 'A8BdqFZb6pX6nzdC55b7xJbaJ'
 consumer_secret = 'fyRbYzEDlfP6lLilmN6Sl5laaTW0NWRdKevWnI1dGwvCbbJBIL'
@@ -38,16 +35,12 @@ class StdOutListener(StreamListener):
                 tweet_id = dict['id']
                 timestamp_ms = dict['timestamp_ms']
 
-                tweet = Tweet(tweet_id, terms_dict, timestamp_ms)
-                db_session.add(tweet)
-                db_session.commit()
-
                 # send the tweet to the aggrigator
                 url = uriForParent
                 values = {
                        "post": {
                            "terms": terms_dict,
-                           "url": "http://www.twitter.com/post/" + str(tweet_id),
+                           "url": "http://www.twitter.com/statuses/" + str(tweet_id),
                            "datetime": timestamp_ms,
                            "mined_at": timestamp_ms
                        },
@@ -68,7 +61,6 @@ class StdOutListener(StreamListener):
         print status
 
 stream = None
-app = None
 
 def start_mining(follow, parenturi, miner_name):
     global uriForParent

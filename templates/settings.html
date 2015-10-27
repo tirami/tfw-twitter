@@ -33,31 +33,45 @@
     	<h1>Settings</h1>
 
 		<form method="post">
-      {% if 'parenturi' in errors %}
-		  <div class="form-group has-error">
-		    <label for="parenturi">Aggrigator URI</label>
-		    <input type="text" class="form-control" id="parenturi" name="parenturi" placeholder="URI" value="{{ config.parenturi }}">
-		    <span class="help-block">{{errors['parenturi']}}</span>
+
+        {% if 'parenturi' in errors %}
+            <div class="form-group has-error">
+                <label for="name">Aggrigator URI</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Name" value="{{ settings['name'] }}">
+                <span class="help-block">{{errors['name']}}</span>
+            </div>
+            {% else %}
+            <div class="form-group">
+                <label for="parenturi">Aggrigator URI</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="URI" value="{{ settings['name'] }}">
+            </div>
+        {% endif %}
+
+        {% if 'parenturi' in errors %}
+          <div class="form-group has-error">
+            <label for="parenturi">Aggrigator URI</label>
+            <input type="text" class="form-control" id="parenturi" name="parenturi" placeholder="URI" value="{{ settings['parenturi'] }}">
+            <span class="help-block">{{errors['parenturi']}}</span>
           </div>
-      {% else %}
+        {% else %}
           <div class="form-group">
             <label for="parenturi">Aggrigator URI</label>
-            <input type="text" class="form-control" id="parenturi" name="parenturi" placeholder="URI" value="{{ config.parenturi }}">
+            <input type="text" class="form-control" id="parenturi" name="parenturi" placeholder="URI" value="{{ settings['parenturi'] }}">
           </div>
-      {% endif %}
+        {% endif %}
 
-      {% if 'users' in errors %}
-		  <div class="form-group has-error">
-		    <label for="users">Twitter UserIDs</label>
-		    <input type="text" class="form-control" id="users" name="users" placeholder="Comma Seperated UserIDs" value="{{ config.users }}">
+        {% if 'users' in errors %}
+          <div class="form-group has-error">
+            <label for="users">Twitter UserIDs</label>
+            <input type="text" class="form-control" id="users" name="users" placeholder="Comma Seperated UserIDs" value="{{ settings['users'] }}">
             <span class="help-block">{{errors['users']}}</span>
-		  </div>
-      {% else %}
-		  <div class="form-group">
-		    <label for="users">Twitter UserIDs</label>
-		    <input type="text" class="form-control" id="users" name="users" placeholder="Comma Seperated UserIDs" value="{{ config.users }}">
-		  </div>
-      {% endif %}
+          </div>
+        {% else %}
+          <div class="form-group">
+            <label for="users">Twitter UserIDs</label>
+            <input type="text" class="form-control" id="users" name="users" placeholder="Comma Seperated UserIDs" value="{{ settings['users'] }}">
+          </div>
+        {% endif %}
 
 
 
