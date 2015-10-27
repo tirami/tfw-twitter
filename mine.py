@@ -1,5 +1,6 @@
 from collections import defaultdict
 import json
+import urllib, urllib2
 
 import nltk
 from nltk.corpus import stopwords
@@ -30,7 +31,7 @@ class StdOutListener(StreamListener):
             tokens = tknzr.tokenize(dict['text'])
             tagged = nltk.pos_tag(tokens)
             nouns = [word for (word, type) in tagged if type == 'NN'] # can be a noun or a hashtag
-            if nouns.count() > 0:
+            if len(nouns) > 0:
                 terms_dict = defaultdict(int)
                 for noun in nouns:
                     terms_dict[noun] += 1
@@ -41,6 +42,26 @@ class StdOutListener(StreamListener):
                 db_session.add(tweet)
                 db_session.commit()
 
+                # send the tweet to the aggrigator
+                url = uriForParent
+                values = {
+                       "post": {
+                           "terms": terms_dict,
+                           "url": "http://www.twitter.com/post/" + str(tweet_id),
+                           "datetime": timestamp_ms,
+                           "mined_at": timestamp_ms
+                       },
+                   "miner_id": nameOfMiner
+                }
+                data = json.dumps(values)
+                req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
+                try:
+                    response = urllib2.urlopen(req)
+                    print response.read()
+                except:
+                    print "Error with aggrigation server."
+            else:
+                print "No nouns."
         return True
 
     def on_error(self, status):
@@ -49,20 +70,26 @@ class StdOutListener(StreamListener):
 stream = None
 app = None
 
-def start_mining(follow):
+def start_mining(follow, parenturi, miner_name):
+    global uriForParent
+    global nameOfMiner
+
+    uriForParent = parenturi
+    nameOfMiner = miner_name
+
     listener = StdOutListener()
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_secret)
     stream = Stream(auth, listener)
-    # stream.filter(follow=follow, async=True)
-    stream.filter(locations=[-122.75,36.8,-121.75,37.8], async=True) # this is for debug, provides more Test Tweets
+    stream.filter(follow=follow, async=True)
+    # stream.filter(locations=[-122.75,36.8,-121.75,37.8], async=True) # this is for debug, provides more Test Tweets
 
 
 def stop_mining():
     stream.close()
 
 
-def reset_miner(follow):
+def reset_miner(follow, parenturi, miner_name):
     if stream != None:
         stop_mining()
-    start_mining(follow)
+    start_mining(follow, parenturi, miner_name)

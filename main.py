@@ -94,7 +94,7 @@ def settings():
 
             # when a new config is posted
             # kill the old Miner and start up a new one
-            mine.reset_miner(users)
+            mine.reset_miner(users, parenturi, "Twitter miner one.")
 
             # return OK
             return render_template('settings.html', config=config, success=True)
