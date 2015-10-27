@@ -45,7 +45,7 @@ class StdOutListener(StreamListener):
                 req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
                 try:
                     response = urllib2.urlopen(req)
-                    print response.read()
+                    # print response.read()
                 except:
                     print "Error with aggrigation server."
             else:
