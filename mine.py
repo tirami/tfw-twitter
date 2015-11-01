@@ -13,6 +13,7 @@ from tweepy import OAuthHandler
 from tweepy import Stream
 
 import time
+import traceback
 
 tknzr = TweetTokenizer()
 stop = stopwords.words('english')
@@ -46,8 +47,10 @@ def send_to_server(url, data):
         print("Sending post to server: " + data)
         response = urllib2.urlopen(req)
         print("Response is " + response)
-    except:
+    except Exception as e:
         print "Error with aggrigation server."
+        print e
+        # print traceback.format_exc()
 
 
 class StdOutListener(StreamListener):
