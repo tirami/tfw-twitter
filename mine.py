@@ -35,7 +35,7 @@ def package_to_json(tweet_id, terms_dict, datetime, mined_at):
            "datetime": datetime,
            "mined_at": mined_at
        },
-       "miner_id": nameOfMiner
+       "miner_id": 2
     }
     data = json.dumps(values)
     return data
@@ -46,7 +46,7 @@ def send_to_server(url, data):
     try:
         print("Sending post to server: " + data)
         response = urllib2.urlopen(req)
-        print("Response is " + response)
+        print("Response is " + str(response.getcode()))
     except Exception as e:
         print "Error with aggrigation server."
         print e
