@@ -71,7 +71,6 @@ def validate_settings(dict):
 #########
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
-
     if request.method == 'GET':
         # render the form
         return render_template('settings.html', settings=settings_dict['settings'])
