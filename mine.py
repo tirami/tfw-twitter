@@ -28,13 +28,14 @@ def process_status(text):
     return terms_dict
 
 def package_to_json(tweet_id, terms_dict, datetime, mined_at):
-    values = {
-       "post": {
+    posts = [{
            "terms": terms_dict,
            "url": "http://www.twitter.com/statuses/" + str(tweet_id),
            "datetime": datetime,
            "mined_at": mined_at
-       },
+    }]
+    values = {
+       "posts": posts,
        "miner_id": 2
     }
     data = json.dumps(values)
