@@ -64,11 +64,12 @@ class StdOutListener(StreamListener):
             terms_dict = process_status(dict['text'])
             tweet_id = dict['id']
             timestamp_ms = dict['timestamp_ms']
-            now = time.mktime(datetime.now().timetuple())
+            timestamp = datetime.fromtimestamp(timestamp_ms).strftime('%Y%m%d%H%M')
+            now =  datetime.now().strftime('%Y%m%d%H%M')  # time.mktime(datetime.now().timetuple())
 
             # send the tweet to the aggrigator
             url = uriForParent
-            data = package_to_json(tweet_id, terms_dict, timestamp_ms, now)
+            data = package_to_json(tweet_id, terms_dict, timestamp, now)
             send_to_server(url, data)
         return True
 
@@ -89,8 +90,8 @@ def download_timelines(auth, follow):
     for user_id in follow.split(','):
         for status in api.user_timeline(user_id=user_id, count=200, include_rts=True):
             terms_dict = process_status(status.text)
-            created_at = time.mktime(status.created_at.timetuple())
-            now = time.mktime(datetime.now().timetuple())
+            created_at = status.created_at.strftime('%Y%m%d%H%M')
+            now =  datetime.now().strftime('%Y%m%d%H%M')
             json = package_to_json(status.id, terms_dict, created_at, now)
             send_to_server(uriForParent, json)
 
