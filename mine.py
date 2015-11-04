@@ -21,7 +21,7 @@ stop = stopwords.words('english')
 def process_status(text):
     tokens = tknzr.tokenize(text)
     tagged = nltk.pos_tag(tokens)
-    nouns = [word for (word, type) in tagged if type == 'NN']
+    nouns = [word for (word, type) in tagged if type == 'NN' and word.lower not in stopwords]
     terms_dict = defaultdict(int)
     for noun in nouns:
         terms_dict[noun] += 1
