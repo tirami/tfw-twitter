@@ -46,7 +46,8 @@ def package_to_json(tweet_id, terms_dict, datetime, mined_at):
 def send_to_server(url, data):
     req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
     try:
-        print("Sending post to server: " + data)
+        print("Sending to: " + url)
+        print("Data: " + data)
         response = urllib2.urlopen(req)
         print("Response is " + str(response.getcode()))
     except Exception as e:
