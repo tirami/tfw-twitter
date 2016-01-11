@@ -19,6 +19,7 @@ settings_dict = yaml.safe_load(settings_file)
 settings_file.close()
 
 # start up the miner
+miner_id = settings_dict['settings']['id']
 users = settings_dict['settings']['users']
 parenturi = settings_dict['settings']['parenturi']
 name = settings_dict['settings']['name']
@@ -26,7 +27,7 @@ consumer_key = settings_dict['settings']['consumer_key']
 consumer_secret = settings_dict['settings']['consumer_secret']
 access_token = settings_dict['settings']['access_token']
 access_secret = settings_dict['settings']['access_secret']
-mine.reset_miner(users, parenturi, name, consumer_key, consumer_secret, access_token, access_secret)
+# mine.reset_miner(miner_id, users, parenturi, name, consumer_key, consumer_secret, access_token, access_secret)
 
 #########
 # Util
@@ -69,6 +70,19 @@ def validate_settings(dict):
 #########
 # Routes
 #########
+@app.route('/id', methods=['POST'])
+def id():
+    global miner_id
+    if request.method == 'POST':
+        params = request.get_json()
+        miner_id = params['id']
+        settings_dict['settings']['id'] = miner_id
+
+        # write the new settings file
+        f = open('settings.yaml', "w")
+        yaml.dump(settings_dict, f, default_flow_style=False, encoding='utf-8')
+        f.close()    
+
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
     if request.method == 'GET':
@@ -98,7 +112,7 @@ def settings():
 
             # when a new config is posted
             # kill the old Miner and start up a new one
-            mine.reset_miner(users, parenturi, name, consumer_key, consumer_secret, access_token, access_secret)
+            mine.reset_miner(miner_id, users, parenturi, name, consumer_key, consumer_secret, access_token, access_secret)
 
             # write the new settings file
             f = open('settings.yaml', "w")

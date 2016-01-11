@@ -3,6 +3,7 @@ settings:
   access_token: 36620718-PAlXuTv5nVo1mRyPf7CqHzCgtMT84pkFksdososs0
   consumer_key: A8BdqFZb6pX6nzdC55b7xJbaJ
   consumer_secret: fyRbYzEDlfP6lLilmN6Sl5laaTW0NWRdKevWnI1dGwvCbbJBIL
+  id: 222
   name: Twitter Miner Three
   parenturi: http://localhost:4000/
   users: 36620718, 17069499, 47344587, 18178208

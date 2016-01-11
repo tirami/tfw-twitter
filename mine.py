@@ -37,7 +37,7 @@ def package_to_json(tweet_id, terms_dict, datetime, mined_at):
     }]
     values = {
        "posts": posts,
-       "miner_id": 2
+       "miner_id": id_of_miner
     }
     data = json.dumps(values)
     return data
@@ -97,9 +97,11 @@ def download_timelines(auth, follow):
             send_to_server(uriForParent, json)
 
 
-def start_mining(follow, parenturi, miner_name, consumer_key, consumer_secret, access_token, access_secret):
+def start_mining(miner_id, follow, parenturi, miner_name, consumer_key, consumer_secret, access_token, access_secret):
     global uriForParent
     global nameOfMiner
+    global id_of_miner
+    id_of_miner = miner_id
     uriForParent = parenturi
     nameOfMiner = miner_name
     auth = OAuthHandler(consumer_key, consumer_secret)
@@ -112,7 +114,7 @@ def stop_mining():
     stream.close()
 
 
-def reset_miner(follow, parenturi, miner_name, consumer_key, consumer_secret, access_token, access_secret):
+def reset_miner(miner_id, follow, parenturi, miner_name, consumer_key, consumer_secret, access_token, access_secret):
     if stream != None:
         stop_mining()
-    start_mining(follow, parenturi, miner_name, consumer_key, consumer_secret, access_token, access_secret)
+    start_mining(miner_id, follow, parenturi, miner_name, consumer_key, consumer_secret, access_token, access_secret)
