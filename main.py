@@ -75,13 +75,17 @@ def id():
     global miner_id
     if request.method == 'POST':
         params = request.get_json()
-        miner_id = params['id']
+        miner_id = int(params['id'])
         settings_dict['settings']['id'] = miner_id
 
         # write the new settings file
         f = open('settings.yaml', "w")
         yaml.dump(settings_dict, f, default_flow_style=False, encoding='utf-8')
-        f.close()    
+        f.close()
+
+        return 'OK', 200
+    else:
+        return 'Error', 400
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
