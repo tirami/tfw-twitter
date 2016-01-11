@@ -44,6 +44,7 @@ def package_to_json(tweet_id, terms_dict, datetime, mined_at):
 
 
 def send_to_server(url, data):
+    url = url + "/v1/minerpost"
     req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
     try:
         print("Sending to: " + url)
