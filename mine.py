@@ -1,6 +1,7 @@
 from collections import defaultdict
 from datetime import datetime
 import json
+import thread
 import urllib2
 
 import nltk
@@ -108,7 +109,7 @@ def start_mining(miner_id, follow, parenturi, miner_name, consumer_key, consumer
     nameOfMiner = miner_name
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_secret)
-    download_timelines(auth, follow)
+    thread.start_new_thread(download_timelines, (auth, follow))
     start_stream(auth, follow)
 
 
