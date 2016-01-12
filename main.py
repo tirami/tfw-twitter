@@ -67,6 +67,7 @@ def validate_settings(dict):
 
     return len(errors) > 0, errors
 
+
 #########
 # Routes
 #########
@@ -86,6 +87,7 @@ def id():
         return 'OK', 200
     else:
         return 'Error', 400
+
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
