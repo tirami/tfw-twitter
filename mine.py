@@ -87,7 +87,7 @@ def download_timelines(auth, follow):
         for status in api.user_timeline(user_id=user_id, count=200, include_rts=True):
             print status.text
         for status in api.user_timeline(user_id=user_id, count=200, include_rts=True):
-            terms_dict = process_status(status.text)
+            terms_dict = extract.process_status(status.text)
             created_at = status.created_at.strftime('%Y%m%d%H%M')
             now =  datetime.now().strftime('%Y%m%d%H%M')
             json = package_to_json(status.id, terms_dict, created_at, now)
