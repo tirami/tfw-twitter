@@ -5,5 +5,5 @@ settings:
   consumer_secret: fyRbYzEDlfP6lLilmN6Sl5laaTW0NWRdKevWnI1dGwvCbbJBIL
   id: 333
   name: Twitter Miner Three
-  parenturi: http://localhost:4000/
-  users: 36620718, 17069499, 47344587, 18178208
+  parenturi: http://localhost:4000
+  users: watty62, SymboticaAndrew, lilmisstee, digitalWestie, davemor

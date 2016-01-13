@@ -57,10 +57,10 @@ def validate_settings(dict):
         errors['parenturi'] = 'This field is missing.'
 
     if has_name and has_users and has_parenturi:
-        users = dict['users']
-        user_id_pattern = re.compile("^[0-9]+(,[0-9]+)*$")
-        if not user_id_pattern.match(users.replace(" ", "")):
-            errors['users'] = 'This should be a comma seperated list of Twitter user ids.'
+        # users = dict['users']
+        # user_id_pattern = re.compile("^[0-9]+(,[0-9]+)*$")
+        # if not user_id_pattern.match(users.replace(" ", "")):
+            # errors['users'] = 'This should be a comma seperated list of Twitter user ids.'
         parenturi = dict['parenturi']
         if not url_re.match(parenturi):
             errors['parenturi'] = 'This should be a valid uri, that points to the aggrigation server.'
