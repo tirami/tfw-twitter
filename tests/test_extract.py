@@ -1,6 +1,6 @@
 import extract
 
-lines = tuple(open("text_tweets.txt", 'r'))
+lines = tuple(open("tweets.txt", 'r'))
 for l in lines:
     print ""
     print l
