@@ -2,6 +2,7 @@ access_secret: ***REMOVED***
 access_token: ***REMOVED***
 consumer_key: ***REMOVED***
 consumer_secret: ***REMOVED***
+id: !!python/unicode '002'
 name: Twitter Miner Two
 parent_uri: http://localhost:4000
 users: tirami_dave
