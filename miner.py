@@ -41,7 +41,7 @@ class TweetListener(StreamListener):
             print "{} http status in response from Twitter.  Recovering ...".format(status_code)
 
 
-class Miner(threading.Thread):
+class TwitterMiner(threading.Thread):
     def __init__(self, category):
         super(Miner, self).__init__()
         self.category = category

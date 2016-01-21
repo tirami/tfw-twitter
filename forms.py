@@ -27,7 +27,7 @@ def validate_url(text):
 
 
 class FormField(object):
-    def __init__(self, input_type, name, label, placeholder="", validator=validate_text, required=False):
+    def __init__(self, input_type, name, label, placeholder="", validator=validate_text, required=True):
         self.type = input_type
         self.name = name
         self.label = label
@@ -46,6 +46,16 @@ class FormField(object):
                 return True, None
         else:
             return self.validator(self.value)
+
+
+class TextField(FormField):
+    def __init__(self, name, label, placeholder="", required=True):
+        super(TextField, self).__init__('text', name, label, placeholder, validate_text, required)
+
+
+class URLField(FormField):
+    def __init__(self, name, label, placeholder="", required=True):
+        super(URLField, self).__init__('text', name, label, placeholder, validate_url, required)
 
 
 class Form(object):
