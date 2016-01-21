@@ -18,7 +18,7 @@ class Category(object):
         self.from_dict(settings)
 
     def save(self):
-        settings = self.__dict__
+        settings = {key: str(val) for key, val in self.__dict__.iteritems()}
         f = open(self.file_path(), "w")
         yaml.dump(settings, f, default_flow_style=False, encoding='utf-8')
         f.close()
