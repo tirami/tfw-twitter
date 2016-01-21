@@ -15,25 +15,15 @@ app.config['DEBUG'] = True
 
 miners = {}
 
-
-class CategoryForm(Form):
-    def __init__(self, values={}):
-        super(CategoryForm, self).__init__(values)
-        self.name = FormField('text', 'name', 'Name', 'Name of the miner.', validate_text, True)
-        self.parent_uri = FormField('text', 'parent_uri', 'Engine URL', 'Url of the engine.', validate_url, True)
-        self.users = FormField('text', 'users', 'Accounts to Mine', 'Comma separated list of Twitter user names.', validate_text, True)
-        self.access_secret = FormField('text', 'access_secret', 'Access Secret', 'Access Secret for Twitter API.', validate_text, True)
-        self.access_token = FormField('text', 'access_token', 'Access Token', 'Access Token for Twitter API.', validate_text, True)
-        self.consumer_key = FormField('text', 'consumer_key', 'Consumer Key', 'Consumer Key for Twitter API.', validate_text, True)
-        self.consumer_secret = FormField('text', 'consumer_secret', 'Consumer Secret', 'Consumer Secret for Twitter API.', validate_text, True)
-
-        self.add_field(self.name)
-        self.add_field(self.parent_uri)
-        self.add_field(self.users)
-        self.add_field(self.access_secret)
-        self.add_field(self.access_token)
-        self.add_field(self.consumer_key)
-        self.add_field(self.consumer_secret)
+form_fields = {
+    'name': FormField('text', 'name', 'Name', 'Name of the miner.', validate_text, True),
+    'parent_uri': FormField('text', 'parent_uri', 'Engine URL', 'Url of the engine.', validate_url, True),
+    'users': FormField('text', 'users', 'Accounts to Mine', 'Comma separated list of Twitter user names.', validate_text, True),
+    'access_secret': FormField('text', 'access_secret', 'Access Secret', 'Access Secret for Twitter API.', validate_text, True),
+    'access_token': FormField('text', 'access_token', 'Access Token', 'Access Token for Twitter API.', validate_text, True),
+    'consumer_key': FormField('text', 'consumer_key', 'Consumer Key', 'Consumer Key for Twitter API.', validate_text, True),
+    'consumer_secret': FormField('text', 'consumer_secret', 'Consumer Secret', 'Consumer Secret for Twitter API.', validate_text, True)
+}
 
 
 @app.route('/categories', methods=['GET', 'POST'])
@@ -59,10 +49,10 @@ def categories_edit(category_id):
         if category:
             if request.method == 'GET':
                 category_dict = category.__dict__
-                form = CategoryForm(category_dict)
+                form = Form(category_dict, form_fields)
                 return render_template('category/edit.html', form=form, category_id=category_id, success=True)
             elif request.method == 'POST':
-                form = CategoryForm(request.form)
+                form = Form(request.form, form_fields)
                 if form.validate():
                     values = form.named_values()
                     category.from_dict(values)
@@ -83,7 +73,8 @@ def categories_edit(category_id):
                 return 'Unsupported request method.', 400
         else:
             return 'Category {} not found.'.format(category_id), 400
-    except ValueError:
+    except ValueError, e:
+        print e
         return '{} is not a valid category id.'.format(category_id), 400
 
 

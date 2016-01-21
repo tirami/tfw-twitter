@@ -49,9 +49,12 @@ class FormField(object):
 
 
 class Form(object):
-    def __init__(self, values):
+    def __init__(self, values, fields):
         self.fields = []
         self.values = values
+        self.__dict__.update(fields)
+        for key, field in fields.iteritems():
+            self.add_field(field)
 
     def add_field(self, field):
         field.value = self.values[field.name]
