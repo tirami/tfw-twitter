@@ -5,46 +5,20 @@ import yaml
 
 class Category(object):
 
-    def __init__(self, category_id, name="",
-                 parent_uri="", users="",
-                 access_secret="", access_token="",
-                 consumer_key="", consumer_secret=""):
+    def __init__(self, category_id):
         self.id = category_id
-        self.name = name
-        self.parent_uri = parent_uri
-        self.users = users
 
-        # twitter credentials
-        self.access_secret = access_secret
-        self.access_token = access_token
-        self.consumer_key = consumer_key
-        self.consumer_secret = consumer_secret
-
-    def set_from_dict(self, d):
-        self.name = d['name']
-        self.parent_uri = d['parent_uri']
-        self.users = d['users']
-        self.access_secret = d['access_secret']
-        self.access_token = d['access_token']
-        self.consumer_key = d['consumer_key']
-        self.consumer_secret = d['consumer_secret']
+    def from_dict(self, fields):
+        self.__dict__.update(fields)
 
     def load(self):
         f = open(self.file_path(), "r")
         settings = yaml.safe_load(f)
         f.close()
-        self.set_from_dict(settings)
+        self.from_dict(settings)
 
     def save(self):
-        settings = {
-            'name': self.name,
-            'parent_uri': self.parent_uri,
-            'users': self.users,
-            'access_secret': self.access_secret,
-            'access_token': self.access_token,
-            'consumer_key': self.consumer_key,
-            'consumer_secret': self.consumer_secret
-        }
+        settings = self.__dict__
         f = open(self.file_path(), "w")
         yaml.dump(settings, f, default_flow_style=False, encoding='utf-8')
         f.close()
@@ -58,7 +32,7 @@ class Category(object):
         rtn = []
         for file_name in files_names:
             category_id = file_name[len('settings'):-len('.yaml')]
-            category = Category(category_id)
+            category = Category(category_id=category_id)
             category.load()
             rtn.append(category)
         return rtn

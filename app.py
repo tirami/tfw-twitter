@@ -6,7 +6,7 @@ from flask import render_template
 from flask import request
 
 from forms import Form, FormField, validate_text, validate_url
-from model import Category
+from category import Category
 from miner import Miner
 
 
@@ -64,7 +64,8 @@ def categories_edit(category_id):
             elif request.method == 'POST':
                 form = CategoryForm(request.form)
                 if form.validate():
-                    category.set_from_dict(form.named_values())
+                    values = form.named_values()
+                    category.from_dict(values)
                     category.save()
                     miner = Miner(category)
                     miners[category_id] = miner
