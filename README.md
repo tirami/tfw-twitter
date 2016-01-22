@@ -8,9 +8,9 @@ The miner is build using Python 2.7 and the [Flask framework](http://flask.pocoo
 
 Following that you will need to install the NLTK stopwords corpus using the NTLK downloader.  Follow the instructions [here](http://www.nltk.org/data.html) to find out how to install corpora. 
 
-The miner is then running by executing main.py using Python.
+The miner is then running by executing runserver.py using Python.
 
-`python main.py`
+`python runserver.py`
 
 ## Usage
 The miner is designed to be managed via the admin interface of the Udadisi engine.  It exposes the following API endpoints.
