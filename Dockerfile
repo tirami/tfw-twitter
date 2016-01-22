@@ -10,4 +10,4 @@ RUN python -m nltk.downloader stopwords
 
 EXPOSE 5000
 
-CMD python app.py
+CMD python runserver.py

@@ -1,5 +1,5 @@
-from forms import TextField, URLField
-import views
+from mining.forms import TextField, URLField
+import mining.views as views
 from miner import TwitterMiner
 
 form_fields = {
@@ -13,7 +13,7 @@ form_fields = {
 }
 
 
-def main():
+def run():
     # configure the service
     views.miner_cls = TwitterMiner
     views.form_fields = form_fields
@@ -21,5 +21,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run()
 

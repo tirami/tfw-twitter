@@ -8,7 +8,7 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 
-import extract
+import mining.extract as extract
 
 
 class TweetListener(StreamListener):
@@ -30,8 +30,8 @@ class TweetListener(StreamListener):
 
             # send the tweet to the aggrigator
             url = self.parent_uri
-            data = Miner.package_to_json(self.miner_id, status['id'], terms_dict, created_at, now)
-            Miner.send_to_parent(url, data)
+            data = TwitterMiner.package_to_json(self.miner_id, status['id'], terms_dict, created_at, now)
+            TwitterMiner.send_to_parent(url, data)
         return True
 
     def on_error(self, status_code):
@@ -43,7 +43,7 @@ class TweetListener(StreamListener):
 
 class TwitterMiner(threading.Thread):
     def __init__(self, category):
-        super(Miner, self).__init__()
+        super(TwitterMiner, self).__init__()
         self.category = category
         self.stream = None
         self.is_downloading = False
@@ -76,8 +76,8 @@ class TwitterMiner(threading.Thread):
                     terms_dict = extract.process_status(status.text)
                     created_at = status.created_at.strftime('%Y%m%d%H%M')
                     now = datetime.now().strftime('%Y%m%d%H%M')
-                    json_out = Miner.package_to_json(self.category.id, status.id, terms_dict, created_at, now)
-                    Miner.send_to_parent(self.category.parent_uri, json_out)
+                    json_out = TwitterMiner.package_to_json(self.category.id, status.id, terms_dict, created_at, now)
+                    TwitterMiner.send_to_parent(self.category.parent_uri, json_out)
                     if not self.is_downloading:
                         return  # stop downloading
 
