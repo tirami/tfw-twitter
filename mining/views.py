@@ -23,7 +23,8 @@ def categories():
         # create new category based on the posted id
         params = request.get_json()
         new_category_id = int(params['id'])
-        new_category = Category(new_category_id)
+        fields = {key: "" for key, value in form_fields.iteritems()}
+        new_category = Category(new_category_id, fields)
         new_category.save()
         return 'OK', 200
     else:

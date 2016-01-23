@@ -5,8 +5,9 @@ import yaml
 
 class Category(object):
 
-    def __init__(self, category_id):
+    def __init__(self, category_id, fields={}):
         self.id = category_id
+        self.from_dict(fields)
 
     def from_dict(self, fields):
         self.__dict__.update(fields)
