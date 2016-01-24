@@ -20,6 +20,7 @@ class Category(object):
 
     def save(self):
         settings = {key: str(val) for key, val in self.__dict__.iteritems()}
+        del settings['id']  # remove the id, we don't want it serialised
         f = open(self.file_path(), "w")
         yaml.dump(settings, f, default_flow_style=False, encoding='utf-8')
         f.close()
