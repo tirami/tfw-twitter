@@ -2,7 +2,6 @@ access_secret: ***REMOVED***
 access_token: ***REMOVED***
 consumer_key: ***REMOVED***
 consumer_secret: ***REMOVED***
-id: '1337'
 name: Twitter Miner One
 parent_uri: http://localhost:4000
 users: digitalWestie

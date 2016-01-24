@@ -34,13 +34,9 @@
 
         {% from "category/_formhelpers.html" import render_field %}
 		<form method="post" action="/categories/{{ category_id }}">
-            {{ render_field(form.name) }}
-            {{ render_field(form.parent_uri) }}
-            {{ render_field(form.users) }}
-            {{ render_field(form.access_secret) }}
-            {{ render_field(form.access_token) }}
-            {{ render_field(form.consumer_key) }}
-            {{ render_field(form.consumer_secret) }}
+            {% for field in form.fields %}
+                {{ render_field(field) }}
+            {% endfor %}
             <button type="submit" class="btn btn-default">Save and Start Mining</button>
 		</form>
 
