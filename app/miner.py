@@ -146,7 +146,7 @@ class TwitterMiner(Thread):
         try:
             urllib2.urlopen(req)
         except Exception as e:
-            print "Exception while sending data to engine."
+            print "Exception while sending data to engine at the uri: {}".format(url)
             print e
 
     @staticmethod
