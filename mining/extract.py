@@ -30,9 +30,14 @@ def remove_non_whitelisted_characters(text):
     return regex.sub('', text)
 
 
+def remove_twitter_usernames(text):
+    return " ".join(filter(lambda x:x[0]!='@', text.split()))
+
+
 def process_status(text):
     text = remove_urls(text)
     text = unescape_html_chars(text)
+    text = remove_twitter_usernames(text)
     text = remove_rt(text)
     text = remove_non_whitelisted_characters(text)
     tokens = tknzr.tokenize(text)
