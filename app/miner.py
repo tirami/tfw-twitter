@@ -1,6 +1,6 @@
 from datetime import datetime
 import json
-import threading
+from threading import Event, Thread
 import urllib2
 
 import tweepy
@@ -41,12 +41,24 @@ class TweetListener(StreamListener):
             print "{} http status in response from Twitter.  Recovering ...".format(status_code)
 
 
-class TwitterMiner(threading.Thread):
+def call_repeatedly(interval, func, *args):
+    stopped = Event()
+
+    def loop():
+        while not stopped.wait(interval):  # the first call is in `interval` secs
+            func(*args)
+    Thread(target=loop).start()
+    return stopped.set
+
+
+class TwitterMiner(Thread):
     def __init__(self, category):
         super(TwitterMiner, self).__init__()
         self.category = category
         self.stream = None
         self.is_downloading = False
+        self.current_queue = []
+        self.stop_timed_queue_flush = None
 
     def run(self):
         auth = OAuthHandler(self.category.consumer_key,
@@ -54,6 +66,7 @@ class TwitterMiner(threading.Thread):
         auth.set_access_token(self.category.access_token,
                               self.category.access_secret)
         api = tweepy.API(auth)
+        self.stop_timed_queue_flush = call_repeatedly(60, self.flush_queue)
         self.subscribe_to_tweet_stream(auth, api)
         self.download_timelines(api)
 
@@ -61,6 +74,7 @@ class TwitterMiner(threading.Thread):
         self.log("Stopping miner.")
         self.is_downloading = False
         self.stream.disconnect()
+        self.stop_timed_queue_flush()
 
     def download_timelines(self, api):
         self.is_downloading = True
@@ -76,8 +90,7 @@ class TwitterMiner(threading.Thread):
                     terms_dict = extract.process_status(status.text)
                     created_at = status.created_at.strftime('%Y%m%d%H%M')
                     now = datetime.now().strftime('%Y%m%d%H%M')
-                    json_out = TwitterMiner.package_to_json(self.category.id, status.id, terms_dict, created_at, now)
-                    TwitterMiner.send_to_parent(self.category.parent_uri, json_out)
+                    self.queue_for_sending(status.id, terms_dict, created_at, now)
                     if not self.is_downloading:
                         return  # stop downloading
 
@@ -91,6 +104,30 @@ class TwitterMiner(threading.Thread):
 
     def log(self, text):
         print "Miner:{} - {}".format(self.category.id, text)
+
+    def queue_for_sending(self, tweet_id, terms_dict, now, mined_at):
+        post = TwitterMiner.dict_of_post(tweet_id, terms_dict, now, mined_at)
+        self.current_queue.append(post)
+        queue_size = len(self.current_queue)
+        if queue_size >= self.category.batch_size:
+            self.flush_queue()
+
+    def flush_queue(self):
+        self.log("Sending Tweets to Server.  Batch size {}".format(len(self.current_queue)))
+        json_body = TwitterMiner.package_batch_to_json(self.category.id, self.current_queue)
+        TwitterMiner.send_to_parent(self.category.parent_uri, json_body)
+        self.current_queue = []
+
+
+    @staticmethod
+    def dict_of_post(post_id, terms_dict, datetime, mined_at):
+        post = {
+           "terms": terms_dict,
+           "url": "http://www.twitter.com/statuses/" + str(post_id),
+           "datetime": datetime,
+           "mined_at": mined_at
+        }
+        return post
 
     @staticmethod
     def resolve_user_ids(api, users):
@@ -113,13 +150,7 @@ class TwitterMiner(threading.Thread):
             print e
 
     @staticmethod
-    def package_to_json(id_of_miner, tweet_id, terms_dict, datetime, mined_at):
-        posts = [{
-               "terms": terms_dict,
-               "url": "http://www.twitter.com/statuses/" + str(tweet_id),
-               "datetime": datetime,
-               "mined_at": mined_at
-        }]
+    def package_batch_to_json(id_of_miner, posts):
         values = {
            "posts": posts,
            "miner_id": id_of_miner

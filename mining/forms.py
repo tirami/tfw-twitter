@@ -11,6 +11,8 @@ url_re = re.compile(
         r'(?::\d+)?' # optional port
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
+integer_re = re.compile(r"(?<![-.])\b[0-9]+\b(?!\.[0-9])")
+
 
 def validate_text(text):
     return True, None # free text is always valid
@@ -24,6 +26,16 @@ def validate_url(text):
             return False, "Please provide a URL."
         else:
             return False, "Please provide a URL. {} is not a valid.".format(text)
+
+
+def validate_integer(text):
+    if integer_re.match(text):
+        return True, None
+    else:
+        if len(text) == 0:
+            return False, "Please provide an integer."
+        else:
+            return False, "Please provide an integer. {} is not valid.".format(text)
 
 
 class FormField(object):
@@ -52,10 +64,24 @@ class TextField(FormField):
     def __init__(self, name, label, placeholder="", required=True):
         super(TextField, self).__init__('text', name, label, placeholder, validate_text, required)
 
+    def parsed_value(self):
+        return self.value
+
 
 class URLField(FormField):
     def __init__(self, name, label, placeholder="", required=True):
         super(URLField, self).__init__('text', name, label, placeholder, validate_url, required)
+
+    def parsed_value(self):
+        return self.value
+
+
+class IntegerField(FormField):
+    def __init__(self, name, label, placeholder="", required=True):
+        super(IntegerField, self).__init__('text', name, label, placeholder, validate_integer, required)
+
+    def parsed_value(self):
+        return int(self.value)
 
 
 class Form(object):
@@ -65,13 +91,14 @@ class Form(object):
         self.__dict__.update(fields)
         for key, field in fields.iteritems():
             self.add_field(field)
+        self.fields.sort(key=lambda x: x.name, reverse=True)
 
     def add_field(self, field):
         field.value = self.values[field.name]
         self.fields.append(field)
 
     def named_values(self):
-        return {field.name: str(field.value) for field in self.fields}
+        return {field.name: field.parsed_value() for field in self.fields}
 
     def validate(self):
         has_passed = True
