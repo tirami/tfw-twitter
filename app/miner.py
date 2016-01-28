@@ -12,10 +12,9 @@ import mining.extract as extract
 
 
 class TweetListener(StreamListener):
-    def __init__(self, miner_id, parent_uri):
+    def __init__(self, miner):
         super(TweetListener, self).__init__()
-        self.miner_id = miner_id
-        self.parent_uri = parent_uri
+        self.miner = miner
 
     def on_data(self, data):
         status = json.loads(data)
@@ -23,15 +22,10 @@ class TweetListener(StreamListener):
             print "Text is missing from the tweet body."
             print status
         else:
-            # process the tweet
             terms_dict = extract.process_status(status['text'])
             created_at = datetime.strptime(status['created_at'], '%a %b %d %H:%M:%S +0000 %Y').strftime('%Y%m%d%H%M')
             now = datetime.now().strftime('%Y%m%d%H%M')
-
-            # send the tweet to the aggrigator
-            url = self.parent_uri
-            data = TwitterMiner.package_to_json(self.miner_id, status['id'], terms_dict, created_at, now)
-            TwitterMiner.send_to_parent(url, data)
+            self.miner.queue_for_sending(status['id'], terms_dict, created_at, now)
         return True
 
     def on_error(self, status_code):
@@ -66,7 +60,8 @@ class TwitterMiner(Thread):
         auth.set_access_token(self.category.access_token,
                               self.category.access_secret)
         api = tweepy.API(auth)
-        self.stop_timed_queue_flush = call_repeatedly(60, self.flush_queue)
+        self.stop_timed_queue_flush = call_repeatedly(
+                self.category.queue_time, self.flush_queue)
         self.subscribe_to_tweet_stream(auth, api)
         self.download_timelines(api)
 
@@ -97,7 +92,7 @@ class TwitterMiner(Thread):
     def subscribe_to_tweet_stream(self, auth, api):
         user_ids = self.resolve_user_ids(api, self.category.users)
         self.log("Subscribing to twitter streams for {}".format(self.category.users))
-        listener = TweetListener(self.category.id, self.category.parent_uri)
+        listener = TweetListener(self)
         self.stream = Stream(auth, listener)
         user_ids_str = [str(user_id) for user_id in user_ids]
         self.stream.filter(follow=user_ids_str, async=True)
@@ -113,18 +108,18 @@ class TwitterMiner(Thread):
             self.flush_queue()
 
     def flush_queue(self):
-        self.log("Sending Tweets to Server.  Batch size {}".format(len(self.current_queue)))
-        json_body = TwitterMiner.package_batch_to_json(self.category.id, self.current_queue)
-        TwitterMiner.send_to_parent(self.category.parent_uri, json_body)
-        self.current_queue = []
-
+        if len(self.current_queue) > 0:
+            self.log("Sending Tweets to Server.  Batch size {}".format(len(self.current_queue)))
+            json_body = TwitterMiner.package_batch_to_json(self.category.id, self.current_queue)
+            TwitterMiner.send_to_parent(self.category.parent_uri, json_body)
+            self.current_queue = []
 
     @staticmethod
-    def dict_of_post(post_id, terms_dict, datetime, mined_at):
+    def dict_of_post(post_id, terms_dict, now, mined_at):
         post = {
            "terms": terms_dict,
            "url": "http://www.twitter.com/statuses/" + str(post_id),
-           "datetime": datetime,
+           "datetime": now,
            "mined_at": mined_at
         }
         return post
