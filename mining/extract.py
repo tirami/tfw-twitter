@@ -31,7 +31,8 @@ def remove_non_whitelisted_characters(text):
 
 
 def remove_twitter_usernames(text):
-    return " ".join(filter(lambda x:x[0]!='@', text.split()))
+    regex = re.compile('@\w*')
+    return regex.sub(' ', text)
 
 
 def process_status(text):
