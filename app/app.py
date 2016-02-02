@@ -19,7 +19,7 @@ def run():
     # configure the service
     views.miner_cls = TwitterMiner
     views.form_fields = form_fields
-    views.app.run()
+    views.app.run(port=80)
 
 
 if __name__ == "__main__":
