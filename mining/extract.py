@@ -44,7 +44,7 @@ def process_status(text):
     tokens = tknzr.tokenize(text)
     print tokens
     tagged = nltk.pos_tag(tokens)
-    terms = [word for (word, tag) in tagged if word not in stop or tag not in tags_to_remove]
+    terms = [word for (word, tag) in tagged if word.lower() not in stop and tag not in tags_to_remove]
     terms_dict = defaultdict(int)
     for noun in terms:
         terms_dict[noun] += 1
