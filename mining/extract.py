@@ -35,6 +35,11 @@ def remove_twitter_usernames(text):
     return regex.sub(' ', text)
 
 
+def remove_stopwords(tagged):
+    terms = [word for (word, tag) in tagged if word.lower() not in stop and tag not in tags_to_remove]
+    return terms
+
+
 def process_status(text):
     text = remove_urls(text)
     text = unescape_html_chars(text)
@@ -42,9 +47,9 @@ def process_status(text):
     text = remove_rt(text)
     text = remove_non_whitelisted_characters(text)
     tokens = tknzr.tokenize(text)
-    print tokens
+    # print tokens
     tagged = nltk.pos_tag(tokens)
-    terms = [word for (word, tag) in tagged if word.lower() not in stop and tag not in tags_to_remove]
+    terms = remove_stopwords(tagged)
     terms_dict = defaultdict(int)
     for noun in terms:
         terms_dict[noun] += 1
