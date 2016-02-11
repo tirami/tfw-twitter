@@ -1,0 +1,11 @@
+access_secret: ***REMOVED***
+access_token: ***REMOVED***
+batch_size: '10'
+consumer_key: ***REMOVED***
+consumer_secret: ***REMOVED***
+name: Nairobi Live Engine Twitter
+parent_uri: http://udadisi-engine-env-1.eu-west-1.elasticbeanstalk.com
+queue_time: '10'
+users: mwebafrica, BAKE_ke, iHub, AfricaResearch, UPNairobi, akirachix, NairobiGarage,
+  gearboxKE, bonifacemwangi, afrigadget, brcknet, iHubResearch, VirtualKenya, sanergy,
+  county_nairobi, ermarchant, KenyaOpenData, kiwanja, TetraTechIntDev, ICTAuthorityKE
