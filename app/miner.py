@@ -46,13 +46,14 @@ def call_repeatedly(interval, func, *args):
 
 
 class TwitterMiner(Thread):
-    def __init__(self, category):
+    def __init__(self, category, logger):
         super(TwitterMiner, self).__init__()
         self.category = category
         self.stream = None
         self.is_downloading = False
         self.current_queue = []
         self.stop_timed_queue_flush = None
+        self.logger = logger
 
     def run(self):
         auth = OAuthHandler(self.category.consumer_key,
@@ -98,7 +99,7 @@ class TwitterMiner(Thread):
         self.stream.filter(follow=user_ids_str, async=True)
 
     def log(self, text):
-        print "Miner:{} - {}".format(self.category.id, text)
+        self.logger.debug("Miner:{} - {}".format(self.category.id, text))
 
     def queue_for_sending(self, tweet_id, terms_dict, now, mined_at):
         post = TwitterMiner.dict_of_post(tweet_id, terms_dict, now, mined_at)

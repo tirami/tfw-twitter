@@ -46,7 +46,7 @@ def categories_edit(category_id):
                     values = form.named_values()
                     category.from_dict(values)
                     category.save()
-                    miner = miner_cls(category)
+                    miner = miner_cls(category, app.logger)
                     miners[category_id] = miner
                     miner.start()
                     return redirect(url_for('categories'))
