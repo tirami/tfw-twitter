@@ -36,7 +36,7 @@ def remove_twitter_usernames(text):
 
 
 def remove_stopwords(tagged):
-    terms = [word for (word, tag) in tagged if word.lower() not in stop and tag not in tags_to_remove]
+    terms = [word for (word, tag) in tagged if word.lower() not in stop and tag not in tags_to_remove and len(word) > 1]
     return terms
 
 
@@ -52,5 +52,6 @@ def process_status(text):
     terms = remove_stopwords(tagged)
     terms_dict = defaultdict(int)
     for noun in terms:
+
         terms_dict[noun] += 1
     return terms_dict
