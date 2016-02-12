@@ -7,7 +7,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
 
 tknzr = TweetTokenizer()
-stop = stopwords.words('english')
+stop = stopwords.words('english') + stopwords.words('spanish')
 tags_to_remove = ['PRP', 'PRP$', 'RP', 'TO', 'IN']
 
 
