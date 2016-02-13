@@ -1,9 +1,0 @@
-access_secret: ***REMOVED***
-access_token: ***REMOVED***
-batch_size: '100'
-consumer_key: ***REMOVED***
-consumer_secret: ***REMOVED***
-name: Twitter Miner One
-parent_uri: http://localhost:4000
-queue_time: '10'
-users: tirami_dave, watty62, SymboticaAndrew, lilmisstee, digitalWestie, davemor

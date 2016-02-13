@@ -1,9 +1,0 @@
-name: Twitter Miner One
-parent_uri: http://localhost:4000
-users: digitalWestie
-batch_size: 6
-queue_time: 10
-access_secret: ***REMOVED***
-access_token: ***REMOVED***
-consumer_key: ***REMOVED***
-consumer_secret: ***REMOVED***
