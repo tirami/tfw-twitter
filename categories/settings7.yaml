@@ -1,6 +1,6 @@
 access_secret: ***REMOVED***
 access_token: ***REMOVED***
-batch_size: '10'
+batch_size: '100'
 consumer_key: ***REMOVED***
 consumer_secret: ***REMOVED***
 name: Dhaka Live Engine Twitter
