@@ -4,7 +4,7 @@ batch_size: '100'
 consumer_key: ***REMOVED***
 consumer_secret: ***REMOVED***
 name: Lima Live Engine Twitter
-parent_uri: http://localhost:4000
+parent_uri: http://engine.udadisi.com
 queue_time: '10'
 users: SolucionesP, SaveChildrenPe, WorldRuralForum, cgiarclimate_LA, omarcelob, MINPRODUCCION,
   CooperAccionPER, Agro_Noticia, biodesarrollo, IICAnoticias, WorldVisionPeru, ecosostenible,
