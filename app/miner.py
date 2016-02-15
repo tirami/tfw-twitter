@@ -140,10 +140,16 @@ class TwitterMiner(Thread):
         url += "/v1/minerpost"
         req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
         try:
-            urllib2.urlopen(req)
+            response = urllib2.urlopen(req)
+        except urllib2.HTTPError, e:
+            print "HTTPError = {}".format(str(e.code))
+        except urllib2.URLError, e:
+            print "URLError = {}".format(str(e.reason))
         except Exception as e:
             print "Exception while sending data to engine at the uri: {}".format(url)
             print e
+        else:
+            print response.getcode()
 
     @staticmethod
     def package_batch_to_json(id_of_miner, posts):
