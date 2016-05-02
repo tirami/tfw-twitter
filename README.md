@@ -10,7 +10,7 @@ Following that you will need to install the NLTK stopwords corpus using the NTLK
 
 The miner is then running by executing runserver.py using Python.
 
-`python runserver.py`
+`python application.py`
 
 ## Usage
 The miner is designed to be managed via the admin interface of the Udadisi engine.  It exposes the following API endpoints.
