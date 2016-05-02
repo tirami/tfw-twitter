@@ -1,8 +1,8 @@
-access_secret: ***REMOVED***
-access_token: ***REMOVED***
+access_secret: INSERT CREDENTIALS
+access_token: INSERT CREDENTIALS
 batch_size: '10'
-consumer_key: ***REMOVED***
-consumer_secret: ***REMOVED***
+consumer_key: INSERT CREDENTIALS
+consumer_secret: INSERT CREDENTIALS
 name: Lima Live Engine Twitter
 parent_uri: http://engine.udadisi.com
 queue_time: '10'
