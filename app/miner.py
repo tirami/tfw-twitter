@@ -1,7 +1,8 @@
 from datetime import datetime
 import json
 from threading import Event, Thread
-import urllib2
+import urllib3
+urllib3.disable_warnings()
 
 import tweepy
 from tweepy.streaming import StreamListener
