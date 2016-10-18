@@ -7,7 +7,7 @@ WORKDIR /udadisi-twitter
 
 RUN apt-get update
 RUN apt-get install -y python python-dev python-pip
-RUN apt-get install libffi-dev libssl-dev
+RUN apt-get install libffi-dev libssl-dev build-essential
 RUN pip install -r requirements.txt
 RUN pip install requests[security]
 
