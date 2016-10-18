@@ -7,7 +7,10 @@ WORKDIR /udadisi-twitter
 
 RUN apt-get update
 RUN apt-get install -y python python-dev python-pip
+RUN apt-get install libffi-dev libssl-dev
 RUN pip install -r requirements.txt
+RUN pip install requests[security]
+
 RUN python -m nltk.downloader stopwords averaged_perceptron_tagger
 EXPOSE 5000
 CMD python application.py
